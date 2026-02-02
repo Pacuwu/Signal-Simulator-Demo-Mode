@@ -1,5 +1,7 @@
 # Signal-Simulator-Demo-Mode
 
+WORKS IN KERNELSU!
+
 English:
 
 

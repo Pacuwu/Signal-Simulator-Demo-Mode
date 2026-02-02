@@ -1,0 +1,6 @@
+id=demo.statusbar
+name=Simulate Signal using demo mode
+version=1.0
+versionCode=1
+author=Minerva
+description=module that simulates signal and network using demo mode

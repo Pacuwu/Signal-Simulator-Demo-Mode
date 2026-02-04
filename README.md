@@ -2,6 +2,9 @@
 
 WORKS IN KERNELSU!
 
+datatype that can be placed: 1x, e, g, h, h+, 3g,3g+, 4g, 4g+, 5g, 5g+, 5ge
+(5g, 5g+ and 5ge only works on some modern ROMs)
+
 Recommended Android versions: those compatible with GravityBox, e.g., Android 10, Android 11, etc.
 
 English:
@@ -18,6 +21,10 @@ If you want to change the randomization time, extract the module and open servic
 Spanish:
 
 FUNCIONA EN KERNELSU! 
+
+tipo de datos que se puede colocar: 1x, e, g, h, h+, 3g,3g+, 4g, 4g+, 5g, 5g+, 5ge
+(5g, 5g+ y 5ge solo funcionan en algunas ROM modernas)
+
 
 Versiones de Android recomendadas: aquellas compatibles con GravityBox, por ejemplo, Android 10, Android 11, etc.
 

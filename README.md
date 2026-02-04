@@ -10,13 +10,13 @@ Recommended Android versions: those compatible with GravityBox, e.g., Android 10
 English:
 
 
-Magisk module that simulates signal and network by taking advantage of the Android demo mode that is randomized every 30 seconds
+Magisk module that simulates signal and network by taking advantage of the Android demo mode that is randomized every random time
 
 
 NOTICE: THIS MODULE DOES NOT PROVIDE A REAL NETWORK OR SIGNAL; IT TAKES ADVANTAGE OF ANDROID'S DEMO MODE.
 
 
-If you want to change the randomization time, extract the module and open service.sh. In the last lines, change sleep 30 to the number of seconds you want, e.g., 15.
+If you want to change the randomization time, extract the module and open service.sh. In the last lines, change "sleep $((25 + RANDOM % 15" to the number of seconds you want, e.g., 30.
 
 Spanish:
 
@@ -29,8 +29,8 @@ tipo de datos que se puede colocar: 1x, e, g, h, h+, 3g,3g+, 4g, 4g+, 5g, 5g+, 5
 Versiones de Android recomendadas: aquellas compatibles con GravityBox, por ejemplo, Android 10, Android 11, etc.
 
 
-Módulo Magisk que simula la señal y la red aprovechando el modo de demostración de Android, que se aleatoriza cada 30 segundos.
+Módulo Magisk que simula la señal y la red aprovechando el modo de demostración de Android, que se aleatoriza cada tiempo aleatorio.
 
 AVISO: ESTE MÓDULO NO PROPORCIONA UNA RED NI SEÑAL REAL; SINO QUE APROVECHA EL MODO DEMO DE ANDROID.
 
-Si desea cambiar el tiempo de aleatorización, extraiga el módulo y abra service.sh. En las últimas líneas, cambie sleep 30 por el número de segundos que desee, por ejemplo, 15.
+Si desea cambiar el tiempo de aleatorización, extraiga el módulo y abra service.sh. En las últimas líneas, cambie la linea "sleep $((25 + RANDOM % 15" por el número de segundos que desee, por ejemplo, 30.

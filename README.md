@@ -15,9 +15,6 @@ Magisk module that simulates signal and network by taking advantage of the Andro
 
 NOTICE: THIS MODULE DOES NOT PROVIDE A REAL NETWORK OR SIGNAL; IT TAKES ADVANTAGE OF ANDROID'S DEMO MODE.
 
-
-If you want to change the randomization time, extract the module and open service.sh. In the last lines, change "sleep $((25 + RANDOM % 15" to the number of seconds you want, e.g., 30.
-
 Spanish:
 
 FUNCIONA EN KERNELSU! 
@@ -32,5 +29,3 @@ Versiones de Android recomendadas: aquellas compatibles con GravityBox, por ejem
 Módulo Magisk que simula la señal y la red aprovechando el modo de demostración de Android, que se aleatoriza cada tiempo aleatorio.
 
 AVISO: ESTE MÓDULO NO PROPORCIONA UNA RED NI SEÑAL REAL; SINO QUE APROVECHA EL MODO DEMO DE ANDROID.
-
-Si desea cambiar el tiempo de aleatorización, extraiga el módulo y abra service.sh. En las últimas líneas, cambie la linea "sleep $((25 + RANDOM % 15" por el número de segundos que desee, por ejemplo, 30.

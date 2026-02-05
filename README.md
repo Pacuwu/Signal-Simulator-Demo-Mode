@@ -10,7 +10,7 @@ Recommended Android versions: those compatible with GravityBox, e.g., Android 10
 English:
 
 
-Magisk module that simulates signal and network by taking advantage of the Android demo mode that is randomized every random time
+Magisk module that simulates signal and network by taking advantage of the Android demo mode
 
 
 NOTICE: THIS MODULE DOES NOT PROVIDE A REAL NETWORK OR SIGNAL; IT TAKES ADVANTAGE OF ANDROID'S DEMO MODE.
@@ -26,6 +26,6 @@ tipo de datos que se puede colocar: 1x, e, g, h, h+, 3g,3g+, 4g, 4g+, 5g, 5g+, 5
 Versiones de Android recomendadas: aquellas compatibles con GravityBox, por ejemplo, Android 10, Android 11, etc.
 
 
-Módulo Magisk que simula la señal y la red aprovechando el modo de demostración de Android, que se aleatoriza cada tiempo aleatorio.
+Módulo Magisk que simula la señal y la red aprovechando el modo de demostración de Android
 
 AVISO: ESTE MÓDULO NO PROPORCIONA UNA RED NI SEÑAL REAL; SINO QUE APROVECHA EL MODO DEMO DE ANDROID.

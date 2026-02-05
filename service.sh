@@ -1,67 +1,62 @@
 #!/system/bin/sh
 
-# Esperar a que el sistema arranque completamente
+# Esperar a que el sistema arranque
 until [ "$(getprop sys.boot_completed)" = "1" ]; do
   sleep 5
 done
 
-# Esperar un poco más para asegurar que SystemUI esté listo
+# En AOSP 10 segundos suelen bastar
 sleep 10
 
-# Habilitar permisos globales para el modo demo
+# Habilitar permisos
 settings put global sysui_demo_allowed 1
 
-# Entrar en demo mode y limpiar la barra
+# Entrar en modo demo
 am broadcast -a com.android.systemui.demo -e command enter
 
-# Bucle infinito para la señal dinámica
-LAST_LEVEL=4
+# Estado inicial
+CURRENT_LEVEL=4
 
 while true; do
-  # 1. Generar nivel aleatorio entre 0 y 4
-  LEVEL=$((RANDOM % 5))
+  # --- LÓGICA HUMANA ---
+  CHANCE=$(( (RANDOM % 100) + 1 ))
 
-  # Evitar saltos bruscos de señal
-  DIFF=$((LEVEL - LAST_LEVEL))
-  if [ ${DIFF#-} -gt 2 ]; then
-      LEVEL=$LAST_LEVEL
+  if [ $CHANCE -le 70 ]; then
+    NEW_LEVEL=$CURRENT_LEVEL
+  elif [ $CHANCE -le 85 ]; then
+    NEW_LEVEL=$((CURRENT_LEVEL + 1))
+  else
+    NEW_LEVEL=$((CURRENT_LEVEL - 1))
   fi
 
-  # 2. Lógica de tecnología de red (Datatype)
-  case $LEVEL in
-    0)
-      # Con 0 barras, alta probabilidad de Edge (E)
-      PROB=$((RANDOM % 10))
-      [ $PROB -le 7 ] && TYPE="e" || TYPE="h+"
-      ;;
-    1)
-      # Con 1 barra, oscila entre H+ y LTE
-      PROB=$((RANDOM % 2))
-      [ $PROB -eq 0 ] && TYPE="h+" || TYPE="lte"
-      ;;
-    2|3|4)
-      # Con buena señal, casi siempre es LTE
-      TYPE="lte"
-      ;;
-  esac
+  # Ajustar límites
+  [ $NEW_LEVEL -gt 4 ] && NEW_LEVEL=4
+  [ $NEW_LEVEL -lt 0 ] && NEW_LEVEL=0
+  CURRENT_LEVEL=$NEW_LEVEL
 
-  # 3. Simular movimiento de datos (flechitas activity)
-  # Elige al azar entre: in (bajada), out (subida), inout (ambas) o nada
-  ACT_LIST="in out inout none"
-  ACTIVITY=$(echo $ACT_LIST | tr ' ' '\n' | shuf -n 1)
-  [ "$ACTIVITY" = "none" ] && ACTIVITY=""
 
-  # 4. ENVIAR COMANDO FINAL
+  # --- ACTIVIDAD DE DATOS REALISTA ---
+  ACT_RAND=$((RANDOM % 10))
+  if [ $ACT_RAND -gt 7 ]; then
+     ACTIVITY="inout"
+  elif [ $ACT_RAND -gt 4 ]; then
+     ACTIVITY="in"
+  else
+     ACTIVITY="" # Reposo
+  fi
+
+  # --- COMANDO AOSP ---
+  # En AOSP, un solo comando suele bastar para todo
   am broadcast -a com.android.systemui.demo \
     -e command network \
     -e mobile show \
     -e fully true \
-    -e level $LEVEL \
-    -e datatype $TYPE \
-    -e activity "$ACTIVITY"
+    -e level $CURRENT_LEVEL \
+    -e datatype h \
+    -e activity "$ACTIVITY" \
+    -e roaming true
 
-  LAST_LEVEL=$LEVEL
-
-  # Esperar 30 segundos antes del siguiente cambio
-  sleep 30
+  # Tiempo de espera aleatorio (entre 15 y 120 segundos)
+  SLEEP_TIME=$(( (RANDOM % 105) + 15 ))
+  sleep $SLEEP_TIME
 done

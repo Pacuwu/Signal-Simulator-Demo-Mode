@@ -15,6 +15,8 @@ Magisk module that simulates signal and network by taking advantage of the Andro
 
 NOTICE: THIS MODULE DOES NOT PROVIDE A REAL NETWORK OR SIGNAL; IT TAKES ADVANTAGE OF ANDROID'S DEMO MODE.
 
+The module can now be managed with commands in Termux; run minenet -h to see the commands.
+
 Spanish:
 
 FUNCIONA EN KERNELSU! 
@@ -29,3 +31,5 @@ Versiones de Android recomendadas: aquellas compatibles con GravityBox, por ejem
 Módulo Magisk que simula la señal y la red aprovechando el modo de demostración de Android
 
 AVISO: ESTE MÓDULO NO PROPORCIONA UNA RED NI SEÑAL REAL; SINO QUE APROVECHA EL MODO DEMO DE ANDROID.
+
+El módulo ahora se puede administrar con comandos en Termux; ejecute minenet -h para ver los comandos.

@@ -1,1 +1,34 @@
+#!/system/bin/sh
 
+ST_DIR="/data/local/tmp/minenet"
+mkdir -p $ST_DIR
+
+case $1 in
+    -l|--level)
+        echo "$2" > $ST_DIR/level
+        echo "Señal configurada en nivel: $2"
+        ;;
+    -t|--type)
+        echo "$2" > $ST_DIR/type
+        echo "Tipo de red configurado en: $2"
+        ;;
+    -r|--roaming)
+        echo "$2" > $ST_DIR/roaming
+        echo "Roaming (R) configurado en: $2"
+        ;;
+    -h|--help)
+        echo "=============================="
+        echo "   MINENET CONTROL CENTER"
+        echo "=============================="
+        echo "Uso: minenet [opción] [valor]"
+        echo ""
+        echo "COMANDOS DE PERSONALIZACIÓN:"
+        echo "  -l [0-4]   Nivel de barras"
+        echo "  -t [tipo]  Tipo (5g, 4g+, lte, h, h+, 3g, 3g+, e, 1x)"
+        echo "  -r [bool]  Roaming (true/false)"
+        echo "=============================="
+        ;;
+    *)
+        echo "Comando no reconocido. Prueba 'minenet -h' para ayuda."
+        ;;
+esac

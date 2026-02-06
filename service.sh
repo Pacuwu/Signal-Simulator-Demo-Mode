@@ -1,62 +1,36 @@
 #!/system/bin/sh
 
-# Esperar a que el sistema arranque
-until [ "$(getprop sys.boot_completed)" = "1" ]; do
-  sleep 5
-done
+# Carpeta de comunicación (persistente y accesible)
+ST_DIR="/data/local/tmp/minenet"
+mkdir -p $ST_DIR
+chmod 777 $ST_DIR
 
-# En AOSP 10 segundos suelen bastar
+# Valores iniciales
+echo "4" > $ST_DIR/level
+echo "5g" > $ST_DIR/type
+echo "true" > $ST_DIR/roaming
+
+until [ "$(getprop sys.boot_completed)" = "1" ]; do sleep 5; done
 sleep 10
 
-# Habilitar permisos
 settings put global sysui_demo_allowed 1
-
-# Entrar en modo demo
 am broadcast -a com.android.systemui.demo -e command enter
 
-# Estado inicial
-CURRENT_LEVEL=4
-
 while true; do
-  # --- LÓGICA HUMANA ---
-  CHANCE=$(( (RANDOM % 100) + 1 ))
+    # Leer valores actuales de los "archivos bandera"
+    LVL=$(cat $ST_DIR/level)
+    TYP=$(cat $ST_DIR/type)
+    ROM=$(cat $ST_DIR/roaming)
 
-  if [ $CHANCE -le 70 ]; then
-    NEW_LEVEL=$CURRENT_LEVEL
-  elif [ $CHANCE -le 85 ]; then
-    NEW_LEVEL=$((CURRENT_LEVEL + 1))
-  else
-    NEW_LEVEL=$((CURRENT_LEVEL - 1))
-  fi
+    # Aplicar configuración
+    am broadcast -a com.android.systemui.demo \
+        -e command network \
+        -e mobile show \
+        -e fully true \
+        -e level $LVL \
+        -e datatype $TYP \
+        -e roaming $ROM \
+        -e wifi hide
 
-  # Ajustar límites
-  [ $NEW_LEVEL -gt 4 ] && NEW_LEVEL=4
-  [ $NEW_LEVEL -lt 0 ] && NEW_LEVEL=0
-  CURRENT_LEVEL=$NEW_LEVEL
-
-
-  # --- ACTIVIDAD DE DATOS REALISTA ---
-  ACT_RAND=$((RANDOM % 10))
-  if [ $ACT_RAND -gt 7 ]; then
-     ACTIVITY="inout"
-  elif [ $ACT_RAND -gt 4 ]; then
-     ACTIVITY="in"
-  else
-     ACTIVITY="" # Reposo
-  fi
-
-  # --- COMANDO AOSP ---
-  # En AOSP, un solo comando suele bastar para todo
-  am broadcast -a com.android.systemui.demo \
-    -e command network \
-    -e mobile show \
-    -e fully true \
-    -e level $CURRENT_LEVEL \
-    -e datatype h \
-    -e activity "$ACTIVITY" \
-    -e roaming true
-
-  # Tiempo de espera aleatorio (entre 15 y 120 segundos)
-  SLEEP_TIME=$(( (RANDOM % 105) + 15 ))
-  sleep $SLEEP_TIME
+    sleep 2
 done

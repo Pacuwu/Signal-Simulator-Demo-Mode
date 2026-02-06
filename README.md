@@ -15,7 +15,7 @@ Magisk module that simulates signal and network by taking advantage of the Andro
 
 NOTICE: THIS MODULE DOES NOT PROVIDE A REAL NETWORK OR SIGNAL; IT TAKES ADVANTAGE OF ANDROID'S DEMO MODE.
 
-The module can now be managed with commands in Termux; run minenet -h to see the commands.
+The module can now be managed with commands in Termux; run `su -c minenet -h` to see the commands.
 
 Spanish:
 
@@ -32,4 +32,4 @@ Módulo Magisk que simula la señal y la red aprovechando el modo de demostraci�
 
 AVISO: ESTE MÓDULO NO PROPORCIONA UNA RED NI SEÑAL REAL; SINO QUE APROVECHA EL MODO DEMO DE ANDROID.
 
-El módulo ahora se puede administrar con comandos en Termux; ejecute minenet -h para ver los comandos.
+El módulo ahora se puede administrar con comandos en Termux; ejecute `su -c minenet -h` para ver los comandos.

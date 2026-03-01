@@ -3,11 +3,6 @@
 ST_DIR="/data/local/tmp/minenet"
 mkdir -p $ST_DIR
 
-case $1 in
-    -v|--volte)
-        echo "$2" > $ST_DIR/volte
-        echo "Icono VoLTE configurado en: $2 (true/false)"
-        ;;
     -l|--level)
         echo "$2" > $ST_DIR/level
         echo "Señal fijada en: $2"
@@ -20,7 +15,6 @@ case $1 in
         echo "=============================="
         echo "   MINENET COMMAND CENTER"
         echo "=============================="
-        echo "  -v [true/false]  Mostrar/Ocultar VoLTE/Show/Hide VoLTE"
         echo "  -l [0-4]         Nivel de barras/bara level"
         echo "  -t [tipo]        Tipo/type (5g, 4g, etc)"
         echo "=============================="

@@ -8,7 +8,6 @@ chmod 777 $ST_DIR
 # Valores iniciales
 echo "4" > $ST_DIR/level
 echo "5g" > $ST_DIR/type
-echo "true" > $ST_DIR/roaming
 
 until [ "$(getprop sys.boot_completed)" = "1" ]; do sleep 5; done
 sleep 10
@@ -19,7 +18,6 @@ am broadcast -a com.android.systemui.demo -e command enter
 # Leer valores guardados
     LVL=$(cat $ST_DIR/level 2>/dev/null || echo "4")
     TYP=$(cat $ST_DIR/type 2>/dev/null || echo "5g")
-    VLT=$(cat $ST_DIR/volte 2>/dev/null || echo "false")
 
     # Aplicar al Modo Demo
     am broadcast -a com.android.systemui.demo \
@@ -27,7 +25,6 @@ am broadcast -a com.android.systemui.demo -e command enter
         -e mobile show \
         -e level $LVL \
         -e datatype $TYP \
-        -e volte $VLT \
         -e wifi hide
 
     sleep 2

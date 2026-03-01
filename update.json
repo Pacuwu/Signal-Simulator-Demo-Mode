@@ -1,6 +1,6 @@
 {
-  "version": "v1.3",
-  "versionCode": 13,
-  "zipUrl": "https://github.com/Pacuwu/Signal-Simulator-Demo-Mode/releases/download/v1.3/FakeSim-Termux-1.3.zip",
+  "version": "v1.3 fix",
+  "versionCode": 14,
+  "zipUrl": "https://github.com/Pacuwu/Signal-Simulator-Demo-Mode/releases/download/v1.3/FakeSim-Termux-1.3 fix.zip",
   "changelog": "https://raw.githubusercontent.com/Pacuwu/Signal-Simulator-Demo-Mode/main/changelog.md"
 }

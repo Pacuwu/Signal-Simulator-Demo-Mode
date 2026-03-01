@@ -16,20 +16,18 @@ sleep 10
 settings put global sysui_demo_allowed 1
 am broadcast -a com.android.systemui.demo -e command enter
 
-while true; do
-    # Leer valores actuales de los "archivos bandera"
-    LVL=$(cat $ST_DIR/level)
-    TYP=$(cat $ST_DIR/type)
-    ROM=$(cat $ST_DIR/roaming)
+# Leer valores guardados
+    LVL=$(cat $ST_DIR/level 2>/dev/null || echo "4")
+    TYP=$(cat $ST_DIR/type 2>/dev/null || echo "5g")
+    VLT=$(cat $ST_DIR/volte 2>/dev/null || echo "false")
 
-    # Aplicar configuración
+    # Aplicar al Modo Demo
     am broadcast -a com.android.systemui.demo \
         -e command network \
         -e mobile show \
-        -e fully true \
         -e level $LVL \
         -e datatype $TYP \
-        -e roaming $ROM \
+        -e volte $VLT \
         -e wifi hide
 
     sleep 2

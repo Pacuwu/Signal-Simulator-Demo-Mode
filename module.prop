@@ -1,6 +1,7 @@
-id=minenent_control
-name=MineNet: Network Simulator Pro
-version=v2.0
-versionCode=2
-author=minerva
-description=Control total de la barra de estado vía Termux. Usa el comando 'minenet' como root para cambiar señal, red y roaming en tiempo real//Full control of the status bar via Termux. Use the 'minenet' command as root to change signal, network, and roaming in real time.
+id=fakesim_termux
+name=FakeSim Termux
+version=v1.3
+versionCode=13
+author=Pacuwu
+description=Simulador de red (5G, VoLTE, etc) controlado por comandos.
+updateJson=https://raw.githubusercontent.com/Pacuwu/Signal-Simulator-Demo-Mode/main/update.json

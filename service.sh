@@ -21,22 +21,26 @@ while true; do
     LVL=$(cat $ST_DIR/level 2>/dev/null || echo "4")
     TYP=$(cat $ST_DIR/type 2>/dev/null || echo "5g")
 
-    # SIM 1 (Slot 0)
+    # --- SIM 1 (Slot 0) ---
     am broadcast -a com.android.systemui.demo \
         -e command network \
         -e slot 0 \
         -e mobile show \
         -e level $LVL \
         -e datatype $TYP \
+        -e volte show \
+        -e roaming true \
         -e wifi hide
 
-    # SIM 2 (Slot 1)
+    # --- SIM 2 (Slot 1) ---
     am broadcast -a com.android.systemui.demo \
         -e command network \
         -e slot 1 \
         -e mobile show \
         -e level $LVL \
         -e datatype $TYP \
+        -e volte show \
+        -e roaming true \
         -e wifi hide
 
     sleep 2

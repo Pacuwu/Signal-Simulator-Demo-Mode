@@ -1,7 +1,7 @@
 id=fakesim_termux
 name=FakeSim Termux
-version=v1.3 fix
-versionCode=14
+version=v1.4
+versionCode=16
 author=Pacuwu
 description=Simulador de red (5G, VoLTE, etc) controlado por comandos.
 updateJson=https://raw.githubusercontent.com/Pacuwu/Signal-Simulator-Demo-Mode/main/update.json

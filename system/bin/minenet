@@ -3,45 +3,32 @@
 ST_DIR="/data/local/tmp/minenet"
 mkdir -p $ST_DIR
 
-# Función para refrescar la barra de estado
 actualizar() {
-    L=$(cat $ST_DIR/level 2>/dev/null || echo "4")
-    T1=$(cat $ST_DIR/type1 2>/dev/null || echo "5g")
-    T2=$(cat $ST_DIR/type2 2>/dev/null || echo "5g")
-
-    # SIM 1 (Slot 0)
-    am broadcast -a com.android.systemui.demo -e command network -e slot 0 -e mobile show -e level $L -e datatype $T1
+    am broadcast -a com.android.systemui.demo -e command enter
+    am broadcast -a com.android.systemui.demo -e command network -e wifi hide
     
-    # SIM 2 (Slot 1)
+    L=$(cat $ST_DIR/level 2>/dev/null || echo "4")
+    T=$(cat $ST_DIR/type 2>/dev/null || echo "5g")
+    N=$(cat $ST_DIR/name 2>/dev/null || echo "MineNet") # Nombre por defecto
+    
+    # Aplicamos el nombre a la SIM 1 con el comando 'operator'
+    am broadcast -a com.android.systemui.demo -e command network -e slot 0 -e mobile show -e level $L -e datatype $T -e operator "$N" -e nosim false
+    
     if [ -f "$ST_DIR/sim2_active" ]; then
-        am broadcast -a com.android.systemui.demo -e command network -e slot 1 -e mobile show -e level $L -e datatype $T2
-    else
-        am broadcast -a com.android.systemui.demo -e command network -e slot 1 -e mobile hide
+        am broadcast -a com.android.systemui.demo -e command network -e slot 1 -e mobile show -e level $L -e datatype $T -e operator "$N" -e nosim false
     fi
 }
 
 case $1 in
-    -h|--help)
-        echo "🛰️ MineNet Help / Ayuda"
-        echo "--------------------------"
-        echo "-l [0-4] : Nivel de señal (ambas SIMs)"
-        echo "-t1 [red]: Tipo de red SIM 1 (5g, 4g, 1x, e...)"
-        echo "-t2 [red]: Tipo de red SIM 2"
-        echo "-s [1/2] : Activar 1 o 2 SIMs"
-        echo "-sat     : MODO SATÉLITE (Android 16+)"
-        ;;
     -l) echo "$2" > $ST_DIR/level ;;
-    -t1) echo "$2" > $ST_DIR/type1 ;;
-    -t2) echo "$2" > $ST_DIR/type2 ;;
-    -s) [ "$2" = "2" ] && touch $ST_DIR/sim2_active || rm -f $ST_DIR/sim2_active ;;
-    -sat)
-        echo "0" > $ST_DIR/level
-        echo "1x" > $ST_DIR/type1
-        echo "🛰️ Buscando satélites..."
+    -t) echo "$2" > $ST_DIR/type ;;
+    -n) echo "$2" > $ST_DIR/name ;; # Guardar el nombre nuevo
+    -s) 
+        if [ "$2" = "2" ]; then touch $ST_DIR/sim2_active; else rm -f $ST_DIR/sim2_active; fi
         ;;
-    *)
-        echo "Usa: minenet -h para ver los comandos"
-        exit 1
+    -fix)
+        settings put global sysui_demo_allowed 1
+        am broadcast -a com.android.systemui.demo -e command enter
         ;;
 esac
 

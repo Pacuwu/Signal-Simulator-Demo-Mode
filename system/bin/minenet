@@ -1,8 +1,11 @@
 #!/system/bin/sh
 
+# Carpeta de datos
 ST_DIR="/data/local/tmp/minenet"
 mkdir -p $ST_DIR
 
+# Inicio de los comandos
+case $1 in
     -l|--level)
         echo "$2" > $ST_DIR/level
         echo "Señal fijada en: $2"
@@ -11,15 +14,25 @@ mkdir -p $ST_DIR
         echo "$2" > $ST_DIR/type
         echo "Red fijada en: $2"
         ;;
+    -s|--sims)
+        if [ "$2" = "2" ]; then
+            touch $ST_DIR/sim2_active
+            echo "Doble SIM activada"
+        else
+            rm -f $ST_DIR/sim2_active
+            echo "Modo de una sola SIM activado"
+        fi
+        ;;
     -h|--help)
         echo "=============================="
         echo "   MINENET COMMAND CENTER"
         echo "=============================="
-        echo "  -l [0-4]         Nivel de barras/bara level"
-        echo "  -t [tipo]        Tipo/type (5g, 4g, etc)"
+        echo "  -l [0-4]         Nivel de barras"
+        echo "  -t [tipo]        Tipo (5g, 4g, lte...)"
+        echo "  -s [1 o 2]       Número de SIMs"
         echo "=============================="
         ;;
     *)
-        echo "Comando no reconocido. Usa 'minenet -h'//Unrecognized command. Use 'minenet -h'"
+        echo "Comando no reconocido. Usa 'minenet -h'"
         ;;
 esac

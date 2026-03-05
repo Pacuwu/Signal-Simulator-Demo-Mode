@@ -3,59 +3,46 @@
 ST_DIR="/data/local/tmp/minenet"
 mkdir -p $ST_DIR
 
-# Función de actualización única para evitar bugs de refresco
-actualizar_iconos() {
-    # Leer el nivel único sincronizado
+# Función para refrescar la barra de estado
+actualizar() {
     L=$(cat $ST_DIR/level 2>/dev/null || echo "4")
-    
-    # Leer tipos de red (estos sí pueden ser distintos)
     T1=$(cat $ST_DIR/type1 2>/dev/null || echo "5g")
     T2=$(cat $ST_DIR/type2 2>/dev/null || echo "5g")
 
-    # Comando para SIM 1 (Slot 0)
-    am broadcast -a com.android.systemui.demo -e command network -e slot 0 -e mobile show -e level $L -e datatype $T1 -e volte show
+    # SIM 1 (Slot 0)
+    am broadcast -a com.android.systemui.demo -e command network -e slot 0 -e mobile show -e level $L -e datatype $T1
     
-    # Comando para SIM 2 (Slot 1) - Solo si está activa
+    # SIM 2 (Slot 1)
     if [ -f "$ST_DIR/sim2_active" ]; then
-        am broadcast -a com.android.systemui.demo -e command network -e slot 1 -e mobile show -e level $L -e datatype $T2 -e volte show
+        am broadcast -a com.android.systemui.demo -e command network -e slot 1 -e mobile show -e level $L -e datatype $T2
     else
         am broadcast -a com.android.systemui.demo -e command network -e slot 1 -e mobile hide
     fi
 }
 
 case $1 in
-    -l|--level)
-        # Cambia el nivel de ambas a la vez
-        echo "$2" > $ST_DIR/level
-        echo "Nivel sincronizado a: $2"
+    -h|--help)
+        echo "🛰️ MineNet Help / Ayuda"
+        echo "--------------------------"
+        echo "-l [0-4] : Nivel de señal (ambas SIMs)"
+        echo "-t1 [red]: Tipo de red SIM 1 (5g, 4g, 1x, e...)"
+        echo "-t2 [red]: Tipo de red SIM 2"
+        echo "-s [1/2] : Activar 1 o 2 SIMs"
+        echo "-sat     : MODO SATÉLITE (Android 16+)"
         ;;
-    -t1)
-        echo "$2" > $ST_DIR/type1
-        echo "SIM 1 red: $2"
-        ;;
-    -t2)
-        echo "$2" > $ST_DIR/type2
-        echo "SIM 2 red: $2"
-        ;;
-    -s)
-        if [ "$2" = "2" ]; then
-            touch $ST_DIR/sim2_active
-            echo "Modo Doble SIM"
-        else
-            rm -f $ST_DIR/sim2_active
-            echo "Modo SIM Única"
-        fi
-        ;;
+    -l) echo "$2" > $ST_DIR/level ;;
+    -t1) echo "$2" > $ST_DIR/type1 ;;
+    -t2) echo "$2" > $ST_DIR/type2 ;;
+    -s) [ "$2" = "2" ] && touch $ST_DIR/sim2_active || rm -f $ST_DIR/sim2_active ;;
     -sat)
-        # Tu modo especial: nivel 0 y red 1x para activar el satélite
         echo "0" > $ST_DIR/level
         echo "1x" > $ST_DIR/type1
-        echo "Modo Satélite / Supervivencia activado 🛰️"
+        echo "🛰️ Buscando satélites..."
         ;;
     *)
-        echo "Uso: minenet -l [0-4] | -t1 [tipo] | -t2 [tipo] | -s [1/2] | -sat"
+        echo "Usa: minenet -h para ver los comandos"
         exit 1
         ;;
 esac
 
-actualizar_iconos
+actualizar

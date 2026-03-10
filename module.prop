@@ -1,6 +1,7 @@
-id=fakesim_termux_normal
-name=FakeSim Termux normal
-version=v1.5.3 normal
-versionCode=20
+id=fakesim_termux
+name=FakeSim Termux
+version=v1.5.4
+versionCode=21
 author=Pacuwu
-description=Simulador de red (5G, VoLTE, etc) controlado por comandos.
+description=Simulador de red y velocidad (5G, h+, etc) controlado por comandos.
+

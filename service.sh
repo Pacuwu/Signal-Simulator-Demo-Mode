@@ -1,37 +1,84 @@
 #!/system/bin/sh
-
+# service.sh - Versión SIM Única: Iconos + Velocidad Real
 ST_DIR="/data/local/tmp/minenet"
-mkdir -p $ST_DIR
 
-# Esperar el arranque
 until [ "$(getprop sys.boot_completed)" = "1" ]; do sleep 5; done
-sleep 5
+sleep 10
+
+# Función maestra para sincronizar Icono -> Velocidad (iptables)
+sync_network_speed() {
+    TYPE="$1"
+    iptables -F INPUT 2>/dev/null
+    iptables -F OUTPUT 2>/dev/null
+
+    case $TYPE in
+        "g")
+            # GPRS (G): ~50 Kbps
+            iptables -A INPUT -m limit --limit 5/s --limit-burst 10 -j ACCEPT
+            iptables -A INPUT -j DROP
+            iptables -A OUTPUT -m limit --limit 5/s --limit-burst 10 -j ACCEPT
+            iptables -A OUTPUT -j DROP
+            ;;
+        "1x")
+            # 1xRTT (1X): ~100 Kbps
+            iptables -A INPUT -m limit --limit 10/s --limit-burst 15 -j ACCEPT
+            iptables -A INPUT -j DROP
+            iptables -A OUTPUT -m limit --limit 10/s --limit-burst 15 -j ACCEPT
+            iptables -A OUTPUT -j DROP
+            ;;
+        "e")
+            # EDGE (E): ~250 Kbps
+            iptables -A INPUT -m limit --limit 25/s --limit-burst 30 -j ACCEPT
+            iptables -A INPUT -j DROP
+            iptables -A OUTPUT -m limit --limit 25/s --limit-burst 30 -j ACCEPT
+            iptables -A OUTPUT -j DROP
+            ;;
+        "3g")
+            # 3G clásico: ~2 Mbps
+            iptables -A INPUT -m limit --limit 150/s --limit-burst 200 -j ACCEPT
+            iptables -A INPUT -j DROP
+            iptables -A OUTPUT -m limit --limit 150/s --limit-burst 200 -j ACCEPT
+            iptables -A OUTPUT -j DROP
+            ;;
+        "h")
+            # HSDPA (H): ~7 Mbps
+            iptables -A INPUT -m limit --limit 600/s --limit-burst 800 -j ACCEPT
+            iptables -A INPUT -j DROP
+            iptables -A OUTPUT -m limit --limit 600/s --limit-burst 800 -j ACCEPT
+            iptables -A OUTPUT -j DROP
+            ;;
+        "h+")
+            # HSPA+ (H+): ~21 Mbps
+            iptables -A INPUT -m limit --limit 1500/s --limit-burst 2000 -j ACCEPT
+            iptables -A INPUT -j DROP
+            iptables -A OUTPUT -m limit --limit 1500/s --limit-burst 2000 -j ACCEPT
+            iptables -A OUTPUT -j DROP
+            ;;
+        *)
+            # MODO LIBRE: Sin límites
+            iptables -F INPUT 2>/dev/null
+            iptables -F OUTPUT 2>/dev/null
+            ;;
+    esac
+}
+
+settings put global sysui_demo_allowed 1
+am broadcast -a com.android.systemui.demo -e command enter
 
 while true; do
-    # Forzar modo demo en silencio
-    settings put global sysui_demo_allowed 1 >/dev/null 2>&1
-    am broadcast -a com.android.systemui.demo -e command enter >/dev/null 2>&1
+    am broadcast -a com.android.systemui.demo -e command network -e wifi hide
 
-    # Cargar ajustes SIM 1
-    L=$(cat $ST_DIR/level 2>/dev/null || echo "4")
-    T=$(cat $ST_DIR/type 2>/dev/null || echo "5g")
-    N=$(cat $ST_DIR/name 2>/dev/null || echo "MineNet")
-
-    # Cargar ajustes SIM 2 (NUEVO)
-    L2=$(cat $ST_DIR/level2 2>/dev/null || echo "$L")
-    T2=$(cat $ST_DIR/type2 2>/dev/null || echo "$T")
-    N2=$(cat $ST_DIR/name2 2>/dev/null || echo "$N")
-
-    # Ocultar WiFi
-    am broadcast -a com.android.systemui.demo -e command network -e wifi hide >/dev/null 2>&1
-
-    # SIM 1: Añadimos 'fully true'
-    am broadcast -a com.android.systemui.demo -e command network -e slot 0 -e mobile show -e level $L -e datatype $T -e operator "$N" -e nosim false -e fully true >/dev/null 2>&1
+    # Leemos y limpiamos datos de la única SIM
+    T1=$(cat $ST_DIR/type 2>/dev/null | tr -d '[:space:]' || echo "5g")
+    L1=$(cat $ST_DIR/level 2>/dev/null | tr -d '[:space:]' || echo "4")
     
-    # SIM 2: Independiente con 'fully true'
-    if [ -f "$ST_DIR/sim2_active" ]; then
-        am broadcast -a com.android.systemui.demo -e command network -e slot 1 -e mobile show -e level $L2 -e datatype $T2 -e operator "$N2" -e nosim false -e fully true >/dev/null 2>&1
-    fi
+    # Aplicamos velocidad
+    sync_network_speed "$T1"
 
-    sleep 1
+    # Actualizamos Visualmente
+    am broadcast -a com.android.systemui.demo \
+        -e command network -e slot 0 -e mobile show \
+        -e level "$L1" -e datatype "$T1" -e nosim false -e fully true
+
+    sleep 10
 done

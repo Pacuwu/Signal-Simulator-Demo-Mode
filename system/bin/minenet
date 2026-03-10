@@ -1,54 +1,34 @@
 #!/system/bin/sh
-
+# minenet - Control de Red (Versión Simplificada)
 ST_DIR="/data/local/tmp/minenet"
 mkdir -p $ST_DIR
 
-actualizar() {
-    # Enviamos los comandos al sistema, pero tiramos los errores a la basura
-    am broadcast -a com.android.systemui.demo -e command enter >/dev/null 2>&1
-    am broadcast -a com.android.systemui.demo -e command network -e wifi hide >/dev/null 2>&1
-    
-    # Datos de la SIM 1 (Tu código original)
-    L=$(cat $ST_DIR/level 2>/dev/null || echo "4")
-    T=$(cat $ST_DIR/type 2>/dev/null || echo "5g")
-    N=$(cat $ST_DIR/name 2>/dev/null || echo "MineNet")
-    
-    # Datos de la SIM 2 (NUEVO: Si están vacíos, copian a la SIM 1 para no fallar)
-    L2=$(cat $ST_DIR/level2 2>/dev/null || echo "$L")
-    T2=$(cat $ST_DIR/type2 2>/dev/null || echo "$T")
-    N2=$(cat $ST_DIR/name2 2>/dev/null || echo "$N")
-    
-    # SIM 1 - Silenciada
-    am broadcast -a com.android.systemui.demo -e command network -e slot 0 -e mobile show -e level $L -e datatype $T -e operator "$N" -e nosim false >/dev/null 2>&1
-    
-    # SIM 2 - Independiente
-    if [ -f "$ST_DIR/sim2_active" ]; then
-        am broadcast -a com.android.systemui.demo -e command network -e slot 1 -e mobile show -e level $L2 -e datatype $T2 -e operator "$N2" -e nosim false >/dev/null 2>&1
-    fi
-}
+if [ "$1" = "-h" ] || [ -z "$1" ]; then
+    echo "Uso: minenet -t [tipo] -l [nivel]"
+    echo "Tipos: 5g, g, 3g, lte, 1x, h, h+"
+    exit 0
+fi
 
-case $1 in
-    # Comandos SIM 1
-    -l) echo "$2" > $ST_DIR/level; actualizar ;;
-    -t) echo "$2" > $ST_DIR/type; actualizar ;;
-    -n) echo "$2" > $ST_DIR/name; actualizar ;;
-    
-    # Comandos SIM 2 (NUEVOS)
-    -l2) echo "$2" > $ST_DIR/level2; actualizar ;;
-    -t2) echo "$2" > $ST_DIR/type2; actualizar ;;
-    -n2) echo "$2" > $ST_DIR/name2; actualizar ;;
-    
-    -s) 
-        if [ "$2" = "2" ]; then touch $ST_DIR/sim2_active; else rm -f $ST_DIR/sim2_active; fi
-        actualizar
-        ;;
-    -fix)
-        settings put global sysui_demo_allowed 1 >/dev/null 2>&1
-        actualizar
-        ;;
-    *)
-        echo "Uso SIM 1: minenet [-l nivel] [-t tipo] [-n nombre]"
-        echo "Uso SIM 2: minenet [-l2 nivel] [-t2 tipo] [-n2 nombre]"
-        echo "Extras: [-s 1/2] [-fix]"
-        ;;
+TYPE="5g"
+LEVEL="4"
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -t | --type )   shift; TYPE=$1 ;;
+        -l | --level )  shift; LEVEL=$1 ;;
+    esac
+    shift
+done
+
+# Guardar configuración
+echo "$TYPE" > $ST_DIR/type
+echo "$LEVEL" > $ST_DIR/level
+
+# Feedback visual
+case $TYPE in
+    "g"|"1x"|"e") echo "⚠️ MODO TORTUGA ACTIVADO 🦖" ;;
+    "3g"|"h"|"h+") echo "⏳ MODO VINTAGE ACTIVADO" ;;
+    *) echo "🚀 MODO VELOCIDAD ACTIVADO" ;;
 esac
+
+echo "Icono: $TYPE | Señal: $LEVEL/4"

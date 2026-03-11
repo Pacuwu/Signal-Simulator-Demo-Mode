@@ -43,6 +43,6 @@ Tested on: DotOS (Android 11), BlissOS (Android 13, bug in wifi hide), e/os (And
 | **5G+** | 91 Mbps |
 | **5G** | *Depends on your internet* |
 
-**OTRA NOTA**: LAS VELOCIDADES EN WIFI 4 Y 2,4 GHz, PUEDEN SER INFERIORES A ESTAS VELOCIDADES!
+> **OTRA NOTA**: LAS VELOCIDADES EN WIFI 4 Y 2,4 GHz, PUEDEN SER INFERIORES A ESTAS VELOCIDADES!
 
-**ANOTHER NOTE**: the speeds in WIFI 4 AND 2.4 GHz MAY BE LOWER THAN THESE SPEEDS!
+> **ANOTHER NOTE**: the speeds in WIFI 4 AND 2.4 GHz MAY BE LOWER THAN THESE SPEEDS!

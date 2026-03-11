@@ -43,6 +43,26 @@ Tested on: DotOS (Android 11), BlissOS (Android 13, bug in wifi hide), e/os (And
 | **5G+** | 91 Mbps |
 | **5G** | *Depends on your internet* |
 
+# Network Test Results / Resultados de pruebas de red
+
+## Discord
+
+| Red / Network | Español | English |
+|---|---|---|
+| G (GPRS) | Abre perfectamente, se puede chatear y enviar mensajes sin mucha demora (app móvil). | Opens perfectly, you can chat and send messages without much delay (mobile app). |
+| 1x | Mismo resultado que GPRS, abre y se puede chatear. | Same result as GPRS, it opens and chatting works. |
+| E (EDGE) | Mismo resultado que GPRS y 1x, se puede abrir y chatear. | Same result as GPRS and 1x, it opens and chatting works. |
+| Satélite (SOS) | Se puede conectar, pero solo enviar mensajes, no conecta a servidores. | Can connect, but only messages can be sent, it does not connect to servers. |
+
+## Character AI
+
+| Red / Network | Español | English |
+|---|---|---|
+| G (GPRS) | La app abrió, el chat abrió y cargaron las imágenes, pero terminó dando error. | The app opened, the chat loaded and images loaded, but it eventually gave an error. |
+| E (EDGE) | La app abrió, las imágenes cargan, el chat abre y las respuestas funcionan. | The app opened, images load, the chat opens and responses work. |
+| 1x | La app abrió pero no carga nada y termina mostrando un error. | The app opened but nothing loads and it ends with an error. |
+| Satélite (SOS) | No abre. | It does not open. |
+
 > **OTRA NOTA**: LAS VELOCIDADES EN WIFI 4 Y 2,4 GHz, PUEDEN SER INFERIORES A ESTAS VELOCIDADES!
 
 > **ANOTHER NOTE**: the speeds in WIFI 4 AND 2.4 GHz MAY BE LOWER THAN THESE SPEEDS!

@@ -19,14 +19,6 @@ sync_network_speed() {
             iptables -A OUTPUT -m limit --limit 5/s --limit-burst 10 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
-        "s")
-            # SATÉLITE (SOS): ~12-24 Kbps (Rango real: 0.5 - 32 Kbps)
-            # Solo 1 paquete por segundo para simular la angustia del espacio
-            iptables -A INPUT -m limit --limit 2/s --limit-burst 4 -j ACCEPT
-            iptables -A INPUT -j DROP
-            iptables -A OUTPUT -m limit --limit 2/s --limit-burst 4 -j ACCEPT
-            iptables -A OUTPUT -j DROP
-            ;;
         "1x")
             # 1xRTT (1X): ~100 Kbps
             iptables -A INPUT -m limit --limit 10/s --limit-burst 15 -j ACCEPT
@@ -35,34 +27,52 @@ sync_network_speed() {
             iptables -A OUTPUT -j DROP
             ;;
         "e")
-            # EDGE (E): Bajamos de 25 a 15 paquetes/s (~180 Kbps)
-            # Para que se note más lento que el 3G pero mejor que el 1x
-            iptables -A INPUT -m limit --limit 15/s --limit-burst 20 -j ACCEPT
+            # EDGE (E): ~250 Kbps
+            iptables -A INPUT -m limit --limit 25/s --limit-burst 30 -j ACCEPT
             iptables -A INPUT -j DROP
-            iptables -A OUTPUT -m limit --limit 15/s --limit-burst 20 -j ACCEPT
+            iptables -A OUTPUT -m limit --limit 25/s --limit-burst 30 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
         "3g")
-            # 3G Realista: ~2 Mbps (Para que no suba a 5.5 Mbps)
+            # 3G clásico: ~2 Mbps
             iptables -A INPUT -m limit --limit 150/s --limit-burst 200 -j ACCEPT
             iptables -A INPUT -j DROP
             iptables -A OUTPUT -m limit --limit 150/s --limit-burst 200 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
         "h")
-            # HSDPA (H): Bajamos de 600 a 400 paquetes/s (~5 Mbps)
-            # Para que se aleje de los 7-8 Mbps que te daba antes
-            iptables -A INPUT -m limit --limit 400/s --limit-burst 500 -j ACCEPT
+            # HSDPA (H): ~7 Mbps
+            iptables -A INPUT -m limit --limit 600/s --limit-burst 800 -j ACCEPT
             iptables -A INPUT -j DROP
-            iptables -A OUTPUT -m limit --limit 400/s --limit-burst 500 -j ACCEPT
+            iptables -A OUTPUT -m limit --limit 600/s --limit-burst 800 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
         "h+")
-            # HSPA+ (H+): Bajamos de 1500 a 800 paquetes/s (~10 Mbps)
-            # Así evitas que sature el procesador y se note la mejora sobre el modo H
-            iptables -A INPUT -m limit --limit 800/s --limit-burst 1000 -j ACCEPT
+            # HSPA+ (H+): ~21 Mbps
+            iptables -A INPUT -m limit --limit 1500/s --limit-burst 2000 -j ACCEPT
             iptables -A INPUT -j DROP
-            iptables -A OUTPUT -m limit --limit 800/s --limit-burst 1000 -j ACCEPT
+            iptables -A OUTPUT -m limit --limit 1500/s --limit-burst 2000 -j ACCEPT
+            iptables -A OUTPUT -j DROP
+            ;;
+        "lte")
+            # LTE (4G): ~30 Mbps
+            iptables -A INPUT -m limit --limit 2500/s --limit-burst 3000 -j ACCEPT
+            iptables -A INPUT -j DROP
+            iptables -A OUTPUT -m limit --limit 2500/s --limit-burst 3000 -j ACCEPT
+            iptables -A OUTPUT -j DROP
+            ;;
+        "lte+")
+            # LTE+ (4G+): ~100 Mbps
+            iptables -A INPUT -m limit --limit 7000/s --limit-burst 7500 -j ACCEPT
+            iptables -A INPUT -j DROP
+            iptables -A OUTPUT -m limit --limit 7000/s --limit-burst 7500 -j ACCEPT
+            iptables -A OUTPUT -j DROP
+            ;;
+        "5ge")
+            # 5Ge (LTE Advanced): ~70 Mbps
+            iptables -A INPUT -m limit --limit 5000/s --limit-burst 5500 -j ACCEPT
+            iptables -A INPUT -j DROP
+            iptables -A OUTPUT -m limit --limit 5000/s --limit-burst 5500 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
         *)

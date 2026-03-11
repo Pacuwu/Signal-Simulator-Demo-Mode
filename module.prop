@@ -1,6 +1,6 @@
 id=fakesim_termux
 name=FakeSim Termux
-version=v1.5.4
-versionCode=21
+version=v1.5.4.1
+versionCode=22
 author=Pacuwu
 description=Simulador de red y velocidad (5G, h+, etc) controlado por comandos.

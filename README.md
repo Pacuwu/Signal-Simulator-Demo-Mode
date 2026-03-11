@@ -5,9 +5,9 @@ Tested on: DotOS (Android 11), BlissOS (Android 13, bug in wifi hide), e/os (And
 
 ## 📊 Speed Test Results / Tabla de Velocidades
 
-> **Note / Nota:** > 🇪🇸 Las pruebas se realizaron en un **Redmi 9A** usando conexión compartida (Hotspot) de un **Redmi Note 12 Pro 5G** en la banda de **5GHz**.
+> **Nota:** > 🇪🇸 Las pruebas se realizaron en un **Redmi 9A** usando conexión compartida (Hotspot) de un **Redmi Note 12 Pro 5G** en la banda de **5GHz**.
 
-> 🇺🇸 Tests performed on a **Redmi 9A** using a hotspot connection from a **Redmi Note 12 Pro 5G** on the **5GHz band**.
+> **Note:** > 🇺🇸 Tests performed on a **Redmi 9A** using a hotspot connection from a **Redmi Note 12 Pro 5G** on the **5GHz band**.
 
 ### 🇪🇸 Versión en Español
 | Modo de Red | Velocidad Obtenida |

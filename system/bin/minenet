@@ -1,10 +1,10 @@
 #!/system/bin/sh
-# minenet - Control de Red (Versión con Modo Satélite)
+# minenet - Control de Red (Versión con Modo Satélite y Carrier)
 ST_DIR="/data/local/tmp/minenet"
 mkdir -p $ST_DIR
 
 if [ "$1" = "-h" ] || [ -z "$1" ]; then
-    echo "Uso: minenet -t [tipo] -l [nivel]"
+    echo "Uso: minenet -t [tipo] -l [nivel] -c [operador]"
     echo "Tipos: 5g, g, 3g, lte, 1x, h, h+, s, lte, lte+, 5ge, 5g+"
     echo "Comando especial: minenet -s (Activa Satélite SOS - Solo Android 16+)"
     exit 0
@@ -12,6 +12,8 @@ fi
 
 TYPE="5g"
 LEVEL="4"
+# El valor por defecto se lee del archivo actual para no sobrescribirlo si no se usa la bandera -c
+CARRIER=$(cat $ST_DIR/carrier 2>/dev/null || echo "")
 
 # Nuevo comando rápido para Satélite
 if [ "$1" = "-s" ]; then
@@ -22,6 +24,7 @@ else
         case $1 in
             -t | --type )   shift; TYPE=$1 ;;
             -l | --level )  shift; LEVEL=$1 ;;
+            -c | --carrier ) shift; CARRIER=$1 ;;
         esac
         shift
     done
@@ -30,16 +33,16 @@ fi
 # Guardar configuración
 echo "$TYPE" > $ST_DIR/type
 echo "$LEVEL" > $ST_DIR/level
+echo "$CARRIER" > $ST_DIR/carrier
 
 # Feedback visual
 case $TYPE in
     "s") echo "🛰️ MODO SATÉLITE SOS ACTIVADO (Solo Android 16)" ;;
     "g"|"1x"|"e") echo "⚠️ MODO TORTUGA ACTIVADO 🦖" ;;
     "3g"|"h"|"h+") echo "⏳ MODO VINTAGE ACTIVADO" ;;
-    "lte"|"lte+"|"5ge") echo "↔️MODO INTERMEDIO ACTIVADO" ;;
+    "lte"|"lte+"|"5ge") echo "↔️ MODO INTERMEDIO ACTIVADO" ;;
     "5g+") echo "🚀🚀 MODO ULTRA VELOCIDAD ACTIVADO" ;;
     *) echo "🚀 MODO VELOCIDAD ACTIVADO" ;;
-
 esac
 
-echo "Icono: $TYPE | Señal: $LEVEL/4"
+echo "Icono: $TYPE | Señal: $LEVEL/4 | Operador: $CARRIER"

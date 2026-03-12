@@ -1,6 +1,6 @@
-id=fakesim_termux
-name=FakeSim Termux
-version=v1.5.5
-versionCode=22
+id=fakesim_termux_android_16_secure
+name=FakeSim Termux Android 16 secure
+version=v1.5.5 secure version for android 16
+versionCode=23
 author=Pacuwu
 description=Simulador de red y velocidad (5G, h+, etc) controlado por comandos.

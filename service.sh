@@ -1,11 +1,11 @@
 #!/system/bin/sh
-# service.sh - Versión Minerva M+ (Estabilizada para Android 16)
+# service.sh - Versión Minerva M+ (Soporte para Carrier + Android 16)
 ST_DIR="/data/local/tmp/minenet"
 
 until [ "$(getprop sys.boot_completed)" = "1" ]; do sleep 5; done
 sleep 10
 
-# Tu función maestra intacta
+# Función maestra para sincronizar Icono -> Velocidad (iptables) 
 sync_network_speed() {
     TYPE="$1"
     iptables -F INPUT 2>/dev/null
@@ -13,45 +13,45 @@ sync_network_speed() {
 
     case $TYPE in
         "g")
-            iptables -A INPUT -m limit --limit 5/s --limit-burst 10 -j ACCEPT
+            iptables -A INPUT -m limit --limit 5/s --limit-burst 4 -j ACCEPT
             iptables -A INPUT -j DROP
-            iptables -A OUTPUT -m limit --limit 5/s --limit-burst 10 -j ACCEPT
+            iptables -A OUTPUT -m limit --limit 5/s --limit-burst 4 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
         "s")
-            iptables -A INPUT -m limit --limit 3/s --limit-burst 6 -j ACCEPT
+            iptables -A INPUT -m limit --limit 8/s --limit-burst 6 -j ACCEPT
             iptables -A INPUT -j DROP
-            iptables -A OUTPUT -m limit --limit 3/s --limit-burst 6 -j ACCEPT
+            iptables -A OUTPUT -m limit --limit 8/s --limit-burst 6 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
         "1x")
-            iptables -A INPUT -m limit --limit 13/s --limit-burst 18 -j ACCEPT
+            iptables -A INPUT -m limit --limit 10/s --limit-burst 8 -j ACCEPT
             iptables -A INPUT -j DROP
-            iptables -A OUTPUT -m limit --limit 13/s --limit-burst 18 -j ACCEPT
+            iptables -A OUTPUT -m limit --limit 10/s --limit-burst 8 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
         "e")
-            iptables -A INPUT -m limit --limit 15/s --limit-burst 20 -j ACCEPT
+            iptables -A INPUT -m limit --limit 15/s --limit-burst 10 -j ACCEPT
             iptables -A INPUT -j DROP
-            iptables -A OUTPUT -m limit --limit 15/s --limit-burst 20 -j ACCEPT
+            iptables -A OUTPUT -m limit --limit 15/s --limit-burst 10 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
         "3g")
-            iptables -A INPUT -m limit --limit 150/s --limit-burst 200 -j ACCEPT
+            iptables -A INPUT -m limit --limit 150/s --limit-burst 100 -j ACCEPT
             iptables -A INPUT -j DROP
-            iptables -A OUTPUT -m limit --limit 150/s --limit-burst 200 -j ACCEPT
+            iptables -A OUTPUT -m limit --limit 150/s --limit-burst 100 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
         "h")
-            iptables -A INPUT -m limit --limit 400/s --limit-burst 500 -j ACCEPT
+            iptables -A INPUT -m limit --limit 400/s --limit-burst 300 -j ACCEPT
             iptables -A INPUT -j DROP
-            iptables -A OUTPUT -m limit --limit 400/s --limit-burst 500 -j ACCEPT
+            iptables -A OUTPUT -m limit --limit 400/s --limit-burst 300 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
         "h+")
-            iptables -A INPUT -m limit --limit 800/s --limit-burst 1000 -j ACCEPT
+            iptables -A INPUT -m limit --limit 800/s --limit-burst 700 -j ACCEPT
             iptables -A INPUT -j DROP
-            iptables -A OUTPUT -m limit --limit 800/s --limit-burst 1000 -j ACCEPT
+            iptables -A OUTPUT -m limit --limit 800/s --limit-burst 700 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
         "lte")
@@ -73,9 +73,9 @@ sync_network_speed() {
             iptables -A OUTPUT -j DROP
             ;;
         "5g+")
-            iptables -A INPUT -m limit --limit 7000/s --limit-burst 7000 -j ACCEPT
+            iptables -A INPUT -m limit --limit 7000/s --limit-burst 700 -j ACCEPT
             iptables -A INPUT -j DROP
-            iptables -A OUTPUT -m limit --limit 7000/s --limit-burst 7000 -j ACCEPT
+            iptables -A OUTPUT -m limit --limit 7000/s --limit-burst 700 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
         *)
@@ -85,43 +85,37 @@ sync_network_speed() {
     esac
 }
 
-# --- INICIO DEL MODO DEMO Y ARRANQUE SEGURO ---
+# --- INICIO DEL MODO DEMO --- 
 settings put global sysui_demo_allowed 1
 am broadcast -a com.android.systemui.demo -e command enter
 
-# Preparamos el terreno con el modo Satélite (el más estable para Android 16)
+# --- DETECCIÓN AUTOMÁTICA DE INICIO --- 
 mkdir -p "$ST_DIR"
-echo "5g" > "$ST_DIR/type"
-echo "4" > "$ST_DIR/level"
+T1=$(cat $ST_DIR/type 2>/dev/null | tr -d '[:space:]' || echo "5g")
+L1=$(cat $ST_DIR/level 2>/dev/null | tr -d '[:space:]' || echo "4")
+C1=$(cat $ST_DIR/carrier 2>/dev/null || echo "")
 
-# Aplicamos configuración inicial manualmente para evitar el crash
-sync_network_speed "s"
-am broadcast -a com.android.systemui.demo \
-    -e command network -e wifi hide -e slot 0 -e mobile show \
-    -e level 0 -e datatype s -e nosim false -e fully true -e activity none
-
-# Pausa de estabilización
-sleep 5
-
-# Inicializamos rastreadores
+# Inicializamos rastreadores con los valores actuales 
 PREV_RX=0
 PREV_TX=0
-LAST_TYPE="5g"
-LAST_LEVEL="4"
+LAST_TYPE="$T1"
+LAST_LEVEL="$L1"
+LAST_CARRIER="$C1"
 LAST_ACT="none"
 
 while true; do
-    # Leemos configuración
-    T1=$(cat $ST_DIR/type 2>/dev/null | tr -d '[:space:]' || echo "lte")
+    # Leemos configuración actual 
+    T1=$(cat $ST_DIR/type 2>/dev/null | tr -d '[:space:]' || echo "5g")
     L1=$(cat $ST_DIR/level 2>/dev/null | tr -d '[:space:]' || echo "4")
+    C1=$(cat $ST_DIR/carrier 2>/dev/null || echo "")
     
-    # SOLO aplicamos iptables si el tipo cambió
+    # SOLO aplicamos iptables si el tipo cambió 
     if [ "$T1" != "$LAST_TYPE" ]; then
         sync_network_speed "$T1"
         LAST_TYPE="$T1"
     fi
 
-    # DETECCIÓN DE TRÁFICO
+    # DETECCIÓN DE TRÁFICO INTELIGENTE 
     LINE=$(cat /proc/net/dev | grep "wlan0")
     CURR_RX=$(echo $LINE | awk '{print $2}')
     CURR_TX=$(echo $LINE | awk '{print $10}')
@@ -134,17 +128,19 @@ while true; do
     PREV_RX=$CURR_RX
     PREV_TX=$CURR_TX
 
-    # SOLO enviamos el broadcast si algo visual cambió
-    if [ "$ACT" != "$LAST_ACT" ] || [ "$L1" != "$LAST_LEVEL" ] || [ "$T1" != "$LAST_TYPE_VISUAL" ]; then
+    # SOLO enviamos el broadcast si algo visual ha cambiado 
+    # Se añade C1 a la comparación para actualizar el nombre al instante
+    if [ "$ACT" != "$LAST_ACT" ] || [ "$L1" != "$LAST_LEVEL" ] || [ "$C1" != "$LAST_CARRIER" ] || [ "$T1" != "$LAST_TYPE_VISUAL" ]; then
         am broadcast -a com.android.systemui.demo \
             -e command network -e wifi hide -e slot 0 -e mobile show \
-            -e level "$L1" -e datatype "$T1" -e nosim false -e fully true \
-            -e activity "$ACT"
+            -e level "$L1" -e datatype "$T1" -e carrier "$C1" \
+            -e nosim false -e fully true -e activity "$ACT"
         
         LAST_ACT="$ACT"
         LAST_LEVEL="$L1"
+        LAST_CARRIER="$C1"
         LAST_TYPE_VISUAL="$T1"
     fi
 
-    sleep 2
+    sleep 2 
 done

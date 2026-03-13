@@ -38,6 +38,20 @@ sync_network_speed() {
             iptables -A OUTPUT -m limit --limit 2000/s --limit-burst 500 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
+        "e+")
+            # Evolved EDGE: Límite de 2.5 Mbps (250/s)
+            iptables -A INPUT -m limit --limit 250/s --limit-burst 70 -j ACCEPT
+            iptables -A INPUT -j DROP
+            iptables -A OUTPUT -m limit --limit 250/s --limit-burst 70 -j ACCEPT
+            iptables -A OUTPUT -j DROP
+            ;;
+        "gprs+")
+            # Evolved GPRS: Límite de 700 kbps (70/s)
+            iptables -A INPUT -m limit --limit 70/s --limit-burst 30 -j ACCEPT
+            iptables -A INPUT -j DROP
+            iptables -A OUTPUT -m limit --limit 70/s --limit-burst 30 -j ACCEPT
+            iptables -A OUTPUT -j DROP
+            ;;
         "1x")
             iptables -A INPUT -m limit --limit 10/s --limit-burst 8 -j ACCEPT
             iptables -A INPUT -j DROP
@@ -66,6 +80,13 @@ sync_network_speed() {
             iptables -A INPUT -m limit --limit 800/s --limit-burst 700 -j ACCEPT
             iptables -A INPUT -j DROP
             iptables -A OUTPUT -m limit --limit 800/s --limit-burst 700 -j ACCEPT
+            iptables -A OUTPUT -j DROP
+            ;;
+        "hspa++")
+            # Evolved HSPA+: Límite de 1000/s
+            iptables -A INPUT -m limit --limit  1000/s --limit-burst 500 -j ACCEPT
+            iptables -A INPUT -j DROP
+            iptables -A OUTPUT -m limit --limit 1000/s --limit-burst 500 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
         "lte")
@@ -103,66 +124,56 @@ sync_network_speed() {
 settings put global sysui_demo_allowed 1
 am broadcast -a com.android.systemui.demo -e command enter
 
-# --- DETECCIÓN AUTOMÁTICA DE INICIO --- 
+# --- PREPARACIÓN DE BUCLE --- 
 mkdir -p "$ST_DIR"
-T1=$(cat $ST_DIR/type 2>/dev/null | tr -d '[:space:]' || echo "5g")
-L1=$(cat $ST_DIR/level 2>/dev/null | tr -d '[:space:]' || echo "4")
-C1=$(cat $ST_DIR/carrier 2>/dev/null || echo "")
-
-# Inicializamos rastreadores con los valores actuales 
-PREV_RX=0
-PREV_TX=0
-LAST_TYPE="$T1"
-LAST_LEVEL="$L1"
-LAST_CARRIER="$C1"
+LAST_TYPE=""
 LAST_ACT="none"
 
 while true; do
-    # Leemos configuración actual 
+    # Leemos configuración actual generada por minenet
     T1=$(cat $ST_DIR/type 2>/dev/null | tr -d '[:space:]' || echo "5g")
     L1=$(cat $ST_DIR/level 2>/dev/null | tr -d '[:space:]' || echo "4")
     C1=$(cat $ST_DIR/carrier 2>/dev/null || echo "")
     
-    # SOLO aplicamos iptables si el tipo cambió 
+    # 🔥 ACTIVADOR DE VELOCIDAD: Si cambias de red, aplicamos el nuevo límite
     if [ "$T1" != "$LAST_TYPE" ]; then
         sync_network_speed "$T1"
         LAST_TYPE="$T1"
     fi
 
-    # DETECCIÓN DE TRÁFICO INTELIGENTE 
-    LINE=$(cat /proc/net/dev | grep "wlan0")
-    CURR_RX=$(echo $LINE | awk '{print $2}')
-    CURR_TX=$(echo $LINE | awk '{print $10}')
-    
-    if [ "$CURR_RX" -gt "$PREV_RX" ]; then DOWN=true; else DOWN=false; fi
-    if [ "$CURR_TX" -gt "$PREV_TX" ]; then UP=true; else UP=false; fi
-
-    if $UP && $DOWN; then ACT="inout"; elif $UP; then ACT="out"; elif $DOWN; then ACT="in"; else ACT="none"; fi
-
-    PREV_RX=$CURR_RX
-    PREV_TX=$CURR_TX
-
-        # Lógica dinámica para mostrar/ocultar WiFi o Móvil
+    # Lógica dinámica visual para las redes "Evolved"
     if [ "$T1" = "sw" ]; then
+        WIFI_CMD="-e wifi show"
+        MOBILE_CMD="-e mobile hide"
+        DTYPE="sw"
+    elif [ "$T1" = "starlink" ]; then
         WIFI_CMD="-e wifi hide"
         MOBILE_CMD="-e mobile show"
+        DTYPE="starlink"
+    elif [ "$T1" = "e+" ]; then
+        WIFI_CMD="-e wifi hide"
+        MOBILE_CMD="-e mobile show"
+        DTYPE="e" 
+    elif [ "$T1" = "gprs+" ]; then
+        WIFI_CMD="-e wifi hide"
+        MOBILE_CMD="-e mobile show"
+        DTYPE="g" 
+    elif [ "$T1" = "hspa++" ]; then
+        WIFI_CMD="-e wifi hide"
+        MOBILE_CMD="-e mobile show"
+        DTYPE="h+" 
     else
+        # Esto es lo que debe ir en el else para todas las demás redes
         WIFI_CMD="-e wifi hide"
         MOBILE_CMD="-e mobile show"
+        DTYPE="$T1"
     fi
 
-    # SOLO enviamos el broadcast si algo visual ha cambiado
-    if [ "$ACT" != "$LAST_ACT" ] || [ "$L1" != "$LAST_LEVEL" ] || [ "$C1" != "$LAST_CARRIER" ] || [ "$T1" != "$LAST_TYPE_VISUAL" ]; then
-        am broadcast -a com.android.systemui.demo \
-            -e command network $WIFI_CMD $MOBILE_CMD -e slot 0 \
-            -e level "$L1" -e datatype "$T1" -e carrier "$C1" \
-            -e nosim false -e fully true -e activity "$ACT"
-        
-        LAST_ACT="$ACT"
-        LAST_LEVEL="$L1"
-        LAST_CARRIER="$C1"
-        LAST_TYPE_VISUAL="$T1"
-    fi
-
+    # Enviamos el broadcast solo si algo cambió
+    am broadcast -a com.android.systemui.demo \
+        -e command network $WIFI_CMD $MOBILE_CMD -e slot 0 \
+        -e level "$L1" -e datatype "$DTYPE" -e carrier "$C1" \
+        -e nosim false -e fully true -e activity "none"
+    
     sleep 2 
 done

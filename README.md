@@ -17,7 +17,7 @@ Tested on: DotOS (Android 11), BlissOS (Android 13, bug in wifi hide), e/os (And
 | **1X** | 170 Kbps |
 | **3G** | 1.8 Mbps |
 | **HSPA** | 4.7 Mbps |
-| **HSPA+** | 11 Mbps |
+| **HSPA+** | 10 Mbps |
 | **LTE** | 27 Mbps |
 | **LTE+** | 92 Mbps |
 | **5G Evolution** | 82 Mbps |
@@ -32,8 +32,8 @@ Tested on: DotOS (Android 11), BlissOS (Android 13, bug in wifi hide), e/os (And
 | **Satélite (SOS)** | 60 Kbps |
 | **Satélite-wifi (inventado por mi)** | 1.73 Mbps |
 | **Starlink** | 20.8 Mbps |
-| **e+** | 2.09 Mbps |
-| **gprs+** | 630 Kbps
+| **e+** | 2.7 Mbps |
+| **gprs+** | 720 Kbps
 | **hspa++** | 11 Mbps
 
 > **NOTA PARA LA REDES ESPECIALES** > LOS TEST DE VELOCIDAD SE HICIERON EN **OPERA MINI** PARA VELOCIDAD DE CARGA Y VELOCIDAD

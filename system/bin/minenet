@@ -6,7 +6,7 @@ mkdir -p $ST_DIR
 if [ "$1" = "-h" ] || [ -z "$1" ]; then
     echo "Uso: minenet -t [tipo] -l [nivel] -c [operador]"
     echo "Tipos: 5g, g, 3g, lte, 1x, h, h+, s, lte, lte+, 5ge, 5g+"
-    echo "Comando especial: minenet -s (Activa Satélite SOS - Solo Android 16+)"
+    echo "Comandos especiales: minenet -s (Activa Satélite SOS - Solo Android 16+) minenet -sw (exclusivo del módulo, solo android 16+)"
     exit 0
 fi
 
@@ -19,6 +19,14 @@ CARRIER=$(cat $ST_DIR/carrier 2>/dev/null || echo "")
 if [ "$1" = "-s" ]; then
     TYPE="s"
     LEVEL="0"
+# Nuevo comando satélite wifi
+elif [ "$1" = "-sw" ]; then
+    TYPE="sw"
+     LEVEL="0"
+# Nuevo comando starlink
+elif [ "$1" = "-starlink" ]; then
+       TYPE="starlink"
+        LEVEL="0"
 else
     while [ "$1" != "" ]; do
         case $1 in
@@ -37,6 +45,8 @@ echo "$CARRIER" > $ST_DIR/carrier
 
 # Feedback visual
 case $TYPE in
+    "sw") echo "🛜🛰️ MODO SATÉLITE-WIFI ACTIVADO (modo especial creado por Minerva)" ;;
+    "starlink") echo "📡 MODO STARLINK DE ELON MUSK ACTIVADO (solo Android 16)" ;;
     "s") echo "🛰️ MODO SATÉLITE SOS ACTIVADO (Solo Android 16)" ;;
     "g"|"1x"|"e") echo "⚠️ MODO TORTUGA ACTIVADO 🦖" ;;
     "3g"|"h"|"h+") echo "⏳ MODO VINTAGE ACTIVADO" ;;

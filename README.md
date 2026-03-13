@@ -26,12 +26,15 @@ Tested on: DotOS (Android 11), BlissOS (Android 13, bug in wifi hide), e/os (And
 
 ---
 
-### **Redes especiales (solo android 16)**
+### **Redes especiales (satélite, satelite wifi y starlin son solo en android 16)**
 | Modo de Red | Velocidad Obtenida |
 | :--- | :--- |
 | **Satélite (SOS)** | 60 Kbps |
 | **Satélite-wifi (inventado por mi)** | 1.73 Mbps |
 | **Starlink** | 20.8 Mbps |
+| **e+** | 2.09 Mbps |
+| **gprs+** | 630 Kbps
+| **hspa++** | 11 Mbps
 
 > **NOTA PARA LA REDES ESPECIALES** > LOS TEST DE VELOCIDAD SE HICIERON EN **OPERA MINI** PARA VELOCIDAD DE CARGA Y VELOCIDAD
 
@@ -54,12 +57,15 @@ Tested on: DotOS (Android 11), BlissOS (Android 13, bug in wifi hide), e/os (And
 
 ---
 
-**Special Networks (Android 16 only)**
+**Special Networks (satellite wifi satellite & starlink on Android 16 only)**
 | Network Mode | Speed Achieved |
 | :--- | :--- |
 | **Satellite (SOS)** | 60 Kbps |
 | **Satellite-Wi-Fi (My own creation)** | 1.73 Mbps |
 | **Starlink** | 20.8 Mbps |
+| **e+** | 2.09 Mbps |
+| **gprs+** | 630 Kbps
+| **hspa++** | 11 Mbps
 
 > **NOTE FOR SPECIAL NETWORKS** > SPEED TESTS WERE PERFORMED ON **OPERA MINI** FOR UPLOAD AND SPEED
 

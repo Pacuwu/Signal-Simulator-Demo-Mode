@@ -143,8 +143,8 @@ while true; do
 
     # Lógica dinámica visual para las redes "Evolved"
     if [ "$T1" = "sw" ]; then
-        WIFI_CMD="-e wifi show"
-        MOBILE_CMD="-e mobile hide"
+        WIFI_CMD="-e wifi hide"
+        MOBILE_CMD="-e mobile show"
         DTYPE="sw"
     elif [ "$T1" = "starlink" ]; then
         WIFI_CMD="-e wifi hide"

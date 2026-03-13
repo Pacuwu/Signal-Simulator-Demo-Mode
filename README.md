@@ -12,7 +12,6 @@ Tested on: DotOS (Android 11), BlissOS (Android 13, bug in wifi hide), e/os (And
 ### 🇪🇸 Versión en Español
 | Modo de Red | Velocidad Obtenida |
 | :--- | :--- |
-| **Satélite (SOS)** | 15 Kbps |
 | **GPRS** | 34 Kbps |
 | **EDGE** | 150 Kbps |
 | **1X** | 170 Kbps |

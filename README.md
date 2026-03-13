@@ -52,10 +52,10 @@ Tested on: DotOS (Android 11), BlissOS (Android 13, bug in wifi hide), e/os (And
 
 ---
 
-### **Special Networks (Android 16 only)** 
-| Network Mode | Speed Achieved | 
-|:--- |:--- |
-| **Satellite (SOS)** | 60 Kbps | |**Satellite-Wi-Fi (My own creation)** | 1.73 Mbps | 
+**Special Networks (Android 16 only)** | Network Mode | Speed Achieved |
+| :--- | :--- |
+| **Satellite (SOS)** | 60 Kbps |
+| **Satellite-Wi-Fi (My own creation)** | 1.73 Mbps |
 | **Starlink** | 20.8 Mbps |
 
 # Network Test Results / Resultados de pruebas de red

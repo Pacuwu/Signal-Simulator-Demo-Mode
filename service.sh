@@ -24,6 +24,20 @@ sync_network_speed() {
             iptables -A OUTPUT -m limit --limit 8/s --limit-burst 6 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
+         "sw")
+             # Límite de 2MB (aprox 2000kb/s)
+            iptables -A INPUT -m limit --limit 200/s --limit-burst 50 -j ACCEPT
+            iptables -A INPUT -j DROP
+            iptables -A OUTPUT -m limit --limit 200/s --limit-burst 50 -j ACCEPT
+            iptables -A OUTPUT -j DROP
+            ;;
+         "starlink")
+             # Simular red satelital starlink (aprox 2000kb/s)
+            iptables -A INPUT -m limit --limit 2000/s --limit-burst 500 -j ACCEPT
+            iptables -A INPUT -j DROP
+            iptables -A OUTPUT -m limit --limit 2000/s --limit-burst 500 -j ACCEPT
+            iptables -A OUTPUT -j DROP
+            ;;
         "1x")
             iptables -A INPUT -m limit --limit 10/s --limit-burst 8 -j ACCEPT
             iptables -A INPUT -j DROP
@@ -128,11 +142,19 @@ while true; do
     PREV_RX=$CURR_RX
     PREV_TX=$CURR_TX
 
-    # SOLO enviamos el broadcast si algo visual ha cambiado 
-    # Se añade C1 a la comparación para actualizar el nombre al instante
+        # Lógica dinámica para mostrar/ocultar WiFi o Móvil
+    if [ "$T1" = "sw" ]; then
+        WIFI_CMD="-e wifi hide"
+        MOBILE_CMD="-e mobile show"
+    else
+        WIFI_CMD="-e wifi hide"
+        MOBILE_CMD="-e mobile show"
+    fi
+
+    # SOLO enviamos el broadcast si algo visual ha cambiado
     if [ "$ACT" != "$LAST_ACT" ] || [ "$L1" != "$LAST_LEVEL" ] || [ "$C1" != "$LAST_CARRIER" ] || [ "$T1" != "$LAST_TYPE_VISUAL" ]; then
         am broadcast -a com.android.systemui.demo \
-            -e command network -e wifi hide -e slot 0 -e mobile show \
+            -e command network $WIFI_CMD $MOBILE_CMD -e slot 0 \
             -e level "$L1" -e datatype "$T1" -e carrier "$C1" \
             -e nosim false -e fully true -e activity "$ACT"
         

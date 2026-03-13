@@ -6,7 +6,7 @@ mkdir -p $ST_DIR
 if [ "$1" = "-h" ] || [ -z "$1" ]; then
     echo "Uso: minenet -t [tipo] -l [nivel] -c [operador]"
     echo "Tipos: 5g, g, 3g, lte, 1x, h, h+, s, lte, lte+, 5ge, 5g+"
-    echo "Comandos especiales: minenet -s (Activa Satélite SOS - Solo Android 16+) minenet -sw (exclusivo del módulo, solo android 16+)"
+    echo "Comandos especiales: minenet -s (Activa Satélite SOS - Solo Android 16+) minenet -sw (exclusivo del módulo, solo android 16+) minenet -starlink (solo Android 16, satélite starlink)"
     exit 0
 fi
 

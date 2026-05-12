@@ -3,6 +3,10 @@ a module that takes advantage of Android's demo mode, simulating network and sig
 
 Tested on: DotOS (Android 11), BlissOS (Android 13, bug in wifi hide), e/os (Android 11, very compatible, hardly seems like demo mode, recommended to use GravityBox for battery icon), voltageOS (Android 16, bug fixed)
 
+It does not work on: HyperOS, MIUI, Funtouch, Origin
+
+It may work (not tested): NokiaUI, HelloUI (Motorola), oxygenOS and any ROM that uses AOSP
+
 ## 📊 Speed Test Results / Tabla de Velocidades
 
 > **Nota:** > 🇪🇸 Las pruebas se realizaron en un **Redmi 9A** usando conexión compartida (Hotspot) de un **Redmi Note 12 Pro 5G** en la banda de **5GHz**.

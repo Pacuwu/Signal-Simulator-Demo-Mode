@@ -7,6 +7,33 @@ It does not work on: HyperOS, MIUI, Funtouch, Origin
 
 It may work (not tested): NokiaUI, HelloUI (Motorola), oxygenOS and any ROM that uses AOSP
 
+Probado en: DotOS (Android 11), BlissOS (Android 13, error al ocultar el wifi), e/os (Android 11, muy compatible, apenas parece un modo demo, se recomienda usar GravityBox para el icono de la batería), voltageOS (Android 16, error corregido) 
+
+No funciona en: HyperOS, MIUI, Funtouch, Origin 
+
+Podría funcionar (no probado) en: NokiaUI, HelloUI (Motorola), oxygenOS y cualquier ROM que use AOSP
+
+
+El icono TTY está activo por defecto
+The TTY icon is active by default
+
+Screenshots/capturas:
+
+<img width="720" height="1600" alt="39066" src="https://github.com/user-attachments/assets/cbc4218f-a4b8-4976-b5e4-b6212b5b7732" />
+<img width="720" height="1600" alt="39065" src="https://github.com/user-attachments/assets/92494335-a79e-465a-af0c-e707e6d21080" />
+<img width="720" height="1600" alt="39064" src="https://github.com/user-attachments/assets/86f251e7-f113-4f5f-9ecb-d2d5bf7894bf" />
+<img width="720" height="1600" alt="39067" src="https://github.com/user-attachments/assets/23ec0f7c-db46-4fc0-ab87-b2e8adf52550" />
+<img width="720" height="1600" alt="39068" src="https://github.com/user-attachments/assets/73d51a71-dad6-4c7e-b239-05540767475e" />
+<img width="720" height="1600" alt="39069" src="https://github.com/user-attachments/assets/62e8689f-1ddc-4241-8eb6-0efbf7e1ea16" />
+<img width="720" height="1600" alt="39073" src="https://github.com/user-attachments/assets/e197e71c-5784-4a72-850e-dd5080401670" />
+<img width="720" height="1600" alt="39070" src="https://github.com/user-attachments/assets/2bb63b3a-8260-4a74-a67f-5dd2ab6a2500" />
+<img width="720" height="1600" alt="39071" src="https://github.com/user-attachments/assets/318b8818-56e9-4ec2-80c6-a10f5bce5746" />
+<img width="720" height="1600" alt="39072" src="https://github.com/user-attachments/assets/e11d6d22-d7a2-4d6d-810b-f4252609c852" />
+<img width="720" height="1600" alt="39074" src="https://github.com/user-attachments/assets/e1a1ac2c-d955-4278-b554-080bfd3ef425" />
+<img width="720" height="1600" alt="39075" src="https://github.com/user-attachments/assets/a79fd7af-d8c0-4396-8c66-0b875da2c956" />
+
+
+
 ## 📊 Speed Test Results / Tabla de Velocidades
 
 > **Nota:** > 🇪🇸 Las pruebas se realizaron en un **Redmi 9A** usando conexión compartida (Hotspot) de un **Redmi Note 12 Pro 5G** en la banda de **5GHz**.

@@ -1,11 +1,22 @@
 #!/system/bin/sh
-# service.sh - Versión Minerva M+ (Soporte para Carrier + Android 16)
+# service.sh - Versión Minerva M+ (Soporte Android 13 / 16)
 ST_DIR="/data/local/tmp/minenet"
 
 until [ "$(getprop sys.boot_completed)" = "1" ]; do sleep 5; done
 sleep 10
 
-# Función maestra para sincronizar Icono -> Velocidad (iptables) 
+# Detectar versión de Android (SDK)
+SDK=$(getprop ro.build.version.sdk)
+# Android 13 = SDK 33 | Android 14 = SDK 34 | Android 15 = SDK 35 | Android 16 = SDK 36
+
+# En Android 13, solo usar slot 0 para evitar bugs con slot 1
+if [ "$SDK" -le 33 ]; then
+    SLOTS="0"
+else
+    SLOTS="0 1"
+fi
+
+# Función maestra para sincronizar Icono -> Velocidad (iptables)
 sync_network_speed() {
     TYPE="$1"
     iptables -F INPUT 2>/dev/null
@@ -25,28 +36,24 @@ sync_network_speed() {
             iptables -A OUTPUT -j DROP
             ;;
          "sw")
-             # Límite de 2MB (aprox 2000kb/s)
             iptables -A INPUT -m limit --limit 200/s --limit-burst 50 -j ACCEPT
             iptables -A INPUT -j DROP
             iptables -A OUTPUT -m limit --limit 200/s --limit-burst 50 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
          "starlink")
-             # Simular red satelital starlink (aprox 2000kb/s)
             iptables -A INPUT -m limit --limit 2000/s --limit-burst 500 -j ACCEPT
             iptables -A INPUT -j DROP
             iptables -A OUTPUT -m limit --limit 2000/s --limit-burst 500 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
         "e+")
-            # Evolved EDGE: Límite de 2.5 Mbps (250/s)
             iptables -A INPUT -m limit --limit 250/s --limit-burst 70 -j ACCEPT
             iptables -A INPUT -j DROP
             iptables -A OUTPUT -m limit --limit 250/s --limit-burst 70 -j ACCEPT
             iptables -A OUTPUT -j DROP
             ;;
         "gprs+")
-            # Evolved GPRS: Límite de 700 kbps (70/s)
             iptables -A INPUT -m limit --limit 70/s --limit-burst 30 -j ACCEPT
             iptables -A INPUT -j DROP
             iptables -A OUTPUT -m limit --limit 70/s --limit-burst 30 -j ACCEPT
@@ -83,8 +90,7 @@ sync_network_speed() {
             iptables -A OUTPUT -j DROP
             ;;
         "hspa++")
-            # Evolved HSPA+: Límite de 1000/s
-            iptables -A INPUT -m limit --limit  1000/s --limit-burst 500 -j ACCEPT
+            iptables -A INPUT -m limit --limit 1000/s --limit-burst 500 -j ACCEPT
             iptables -A INPUT -j DROP
             iptables -A OUTPUT -m limit --limit 1000/s --limit-burst 500 -j ACCEPT
             iptables -A OUTPUT -j DROP
@@ -120,60 +126,105 @@ sync_network_speed() {
     esac
 }
 
-# --- INICIO DEL MODO DEMO --- 
+# Función para ocultar WiFi de forma explícita
+# En Android 13, el comando combinado no funciona bien — hay que enviarlo por separado
+hide_wifi() {
+    am broadcast -a com.android.systemui.demo -e command wifi -e wifi hide
+    # Pequeña pausa para que el sistema lo procese antes del comando de red
+    sleep 1
+}
+
+# --- INICIO DEL MODO DEMO ---
 settings put global sysui_demo_allowed 1
 am broadcast -a com.android.systemui.demo -e command enter
+am broadcast -a com.android.systemui.demo -e command status -e tty show
 
-# --- PREPARACIÓN DE BUCLE --- 
+# En Android 13: ocultar WiFi inmediatamente al arrancar
+if [ "$SDK" -le 33 ]; then
+    hide_wifi
+fi
+
+# --- PREPARACIÓN DE BUCLE ---
 mkdir -p "$ST_DIR"
-LAST_TYPE=""
-LAST_ACT="none"
+LAST_RX=0
+LAST_TX=0
+LAST_TYPE="5g"
 
 while true; do
-    # Leemos configuración actual generada por minenet
-    T1=$(cat $ST_DIR/type 2>/dev/null | tr -d '[:space:]' || echo "5g")
+    # 1. LECTURA DE DATOS
+    T1=$(cat $ST_DIR/type 2>/dev/null | tr -d '[:space:]')
+    [ -z "$T1" ] && T1="5g"
+
     L1=$(cat $ST_DIR/level 2>/dev/null | tr -d '[:space:]' || echo "4")
     C1=$(cat $ST_DIR/carrier 2>/dev/null || echo "")
-    
-    # 🔥 ACTIVADOR DE VELOCIDAD: Si cambias de red, aplicamos el nuevo límite
+    R1=$(cat $ST_DIR/roaming 2>/dev/null | tr -d '[:space:]' || echo "false")
+
+    # 2. RADAR DE TRÁFICO DIRECCIONAL
+    NET_STATS=$(cat /proc/net/dev | grep -E "wlan0|rmnet_data0")
+    CURRENT_RX=$(echo "$NET_STATS" | awk '{s+=$2} END {print s}')
+    CURRENT_TX=$(echo "$NET_STATS" | awk '{s+=$10} END {print s}')
+
+    if [ "$CURRENT_RX" != "$LAST_RX" ] && [ "$CURRENT_TX" != "$LAST_TX" ]; then
+        ACTIVITY="inout"
+    elif [ "$CURRENT_RX" != "$LAST_RX" ]; then
+        ACTIVITY="in"
+    elif [ "$CURRENT_TX" != "$LAST_TX" ]; then
+        ACTIVITY="out"
+    else
+        ACTIVITY="none"
+    fi
+
+    LAST_RX=$CURRENT_RX
+    LAST_TX=$CURRENT_TX
+
+    # 3. ACTIVADOR DE VELOCIDAD (solo si cambió el tipo)
     if [ "$T1" != "$LAST_TYPE" ]; then
         sync_network_speed "$T1"
         LAST_TYPE="$T1"
     fi
 
-    # Lógica dinámica visual para las redes "Evolved"
+    # 4. Lógica de iconos
     if [ "$T1" = "sw" ]; then
-        WIFI_CMD="-e wifi hide"
-        MOBILE_CMD="-e mobile show"
-        DTYPE="sw"
+        MOBILE_CMD="-e mobile show"; DTYPE="sw"
     elif [ "$T1" = "starlink" ]; then
-        WIFI_CMD="-e wifi hide"
-        MOBILE_CMD="-e mobile show"
-        DTYPE="starlink"
+        MOBILE_CMD="-e mobile show"; DTYPE="starlink"
     elif [ "$T1" = "e+" ]; then
-        WIFI_CMD="-e wifi hide"
-        MOBILE_CMD="-e mobile show"
-        DTYPE="e" 
+        MOBILE_CMD="-e mobile show"; DTYPE="e"
     elif [ "$T1" = "gprs+" ]; then
-        WIFI_CMD="-e wifi hide"
-        MOBILE_CMD="-e mobile show"
-        DTYPE="g" 
+        MOBILE_CMD="-e mobile show"; DTYPE="g"
     elif [ "$T1" = "hspa++" ]; then
-        WIFI_CMD="-e wifi hide"
-        MOBILE_CMD="-e mobile show"
-        DTYPE="h+" 
+        MOBILE_CMD="-e mobile show"; DTYPE="h+"
     else
-        # Esto es lo que debe ir en el else para todas las demás redes
-        WIFI_CMD="-e wifi hide"
-        MOBILE_CMD="-e mobile show"
-        DTYPE="$T1"
+        MOBILE_CMD="-e mobile show"; DTYPE="$T1"
     fi
 
-    # Enviamos el broadcast solo si algo cambió
-    am broadcast -a com.android.systemui.demo \
-        -e command network $WIFI_CMD $MOBILE_CMD -e slot 0 \
-        -e level "$L1" -e datatype "$DTYPE" -e carrier "$C1" \
-        -e nosim false -e fully true -e activity "none"
-    
-    sleep 2 
+    # 5. FIX ANDROID 13: Ocultar WiFi ANTES de enviar el comando de red
+    # En Android 13 el parámetro "-e wifi hide" dentro del comando network no funciona bien
+    if [ "$SDK" -le 33 ]; then
+        am broadcast -a com.android.systemui.demo -e command wifi -e wifi hide
+    fi
+
+    # 6. LIMPIEZA DE SLOTS EXTRA (Android 16+)
+    if [ "$SDK" -gt 33 ]; then
+        am broadcast -a com.android.systemui.demo -e command network -e slot 2 -e nosim true
+        am broadcast -a com.android.systemui.demo -e command network -e slot 3 -e nosim true
+    fi
+
+    # 7. LANZAMIENTO DE ICONOS (slots según versión de Android)
+    for SLOT in $SLOTS; do
+        am broadcast -a com.android.systemui.demo \
+            -e command network \
+            -e wifi hide \
+            $MOBILE_CMD \
+            -e slot $SLOT \
+            -e level "$L1" \
+            -e datatype "$DTYPE" \
+            -e carrier "$C1" \
+            -e roaming "$R1" \
+            -e activity "$ACTIVITY" \
+            -e nosim false \
+            -e fully true
+    done
+
+    sleep 2
 done

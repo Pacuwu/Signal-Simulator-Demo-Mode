@@ -1,6 +1,6 @@
 id=fakesim_termux
 name=FakeSim Termux
-version=v1.5.6
-versionCode=23
+version=v1.5.6.3-A13fix
+versionCode=24
 author=Pacuwu
-description=Simulador de red y velocidad (5G, h+, etc) controlado por comandos.
+description=Simulador de red y velocidad (5G, h+, etc). Fix WiFi en Android 13.

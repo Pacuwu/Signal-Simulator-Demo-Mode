@@ -4,15 +4,18 @@ ST_DIR="/data/local/tmp/minenet"
 mkdir -p $ST_DIR
 
 if [ "$1" = "-h" ] || [ -z "$1" ]; then
-    echo "Uso: minenet -t [tipo] -l [nivel] -c [operador]"
+    echo "Uso: minenet -t [tipo] -l [nivel] -t2 [tipo slot 2] -l2 [nivel slot 2] -c [operador]"
     echo "Tipos: 5g, g, 3g, lte, 1x, h, h+, s, lte, lte+, 5ge, 5g+"
     echo "Comandos especiales: minenet -s (Activa Satélite SOS - Solo Android 16+) minenet -sw (exclusivo del módulo, solo android 16+)"
     echo "Redes Especiales evolved: minenet -gprs+ minenet -e+ minenet -hspa++"
+    echo "Ejemplo doble slot: minenet -t lte -l 4 -l2 2"
     exit 0
 fi
 
 TYPE="5g"
 LEVEL="4"
+LEVEL2=""
+TYPE2=""
 # El valor por defecto se lee del archivo actual para no sobrescribirlo si no se usa la bandera -c
 CARRIER=$(cat $ST_DIR/carrier 2>/dev/null || echo "")
 
@@ -43,8 +46,10 @@ elif [ "$1" = "-hspa++" ]; then
 else
     while [ "$1" != "" ]; do
         case $1 in
-            -t | --type )   shift; TYPE=$1 ;;
-            -l | --level )  shift; LEVEL=$1 ;;
+            -t | --type )    shift; TYPE=$1 ;;
+            -t2 | --type2 )  shift; TYPE2=$1 ;;
+            -l | --level )   shift; LEVEL=$1 ;;
+            -l2 | --level2 ) shift; LEVEL2=$1 ;;
             -c | --carrier ) shift; CARRIER=$1 ;;
         esac
         shift
@@ -55,6 +60,20 @@ fi
 echo "$TYPE" > $ST_DIR/type
 echo "$LEVEL" > $ST_DIR/level
 echo "$CARRIER" > $ST_DIR/carrier
+
+# Guardar type2 solo si se especificó, si no borrarlo para que siga al slot 0
+if [ -n "$TYPE2" ]; then
+    echo "$TYPE2" > $ST_DIR/type2
+else
+    rm -f $ST_DIR/type2
+fi
+
+# Guardar nivel del slot 2 solo si se especificó, si no borrarlo para que siga al slot 1
+if [ -n "$LEVEL2" ]; then
+    echo "$LEVEL2" > $ST_DIR/level2
+else
+    rm -f $ST_DIR/level2
+fi
 
 # Feedback visual
 case $TYPE in
@@ -69,4 +88,12 @@ case $TYPE in
     *) echo "🚀 MODO VELOCIDAD ACTIVADO" ;;
 esac
 
-echo "Icono: $TYPE | Señal: $LEVEL/4 | Operador: $CARRIER"
+if [ -n "$LEVEL2" ] && [ -n "$TYPE2" ]; then
+    echo "Slot 1: $TYPE ($LEVEL/4) | Slot 2: $TYPE2 ($LEVEL2/4) | Operador: $CARRIER"
+elif [ -n "$LEVEL2" ]; then
+    echo "Slot 1: $TYPE ($LEVEL/4) | Slot 2: $TYPE ($LEVEL2/4) | Operador: $CARRIER"
+elif [ -n "$TYPE2" ]; then
+    echo "Slot 1: $TYPE ($LEVEL/4) | Slot 2: $TYPE2 ($LEVEL/4) | Operador: $CARRIER"
+else
+    echo "Icono: $TYPE | Señal: $LEVEL/4 | Operador: $CARRIER"
+fi

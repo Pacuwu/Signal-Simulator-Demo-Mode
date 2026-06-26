@@ -310,5 +310,4 @@ If a manual `type` file exists, it takes priority over the schedule.
 
 ## 👤 Credits / Créditos
 
-- **Pacuwu** — original module
-- **Minerva** — Android 13 fix, real-time battery/clock, NFC, record mode, dual slot level, schedule
+- **Mure2005** — original module & Android 13 fix, real-time battery/clock, NFC, record mode, dual slot level, schedule

@@ -1,6 +1,6 @@
 id=fakesim_termux
 name=FakeSim Termux
-version=v1.6.1-A13fix
-versionCode=31
-author=Pacuwu
-description=Fix WiFi A13 + Reloj/Bateria + NFC + Tipo y nivel independiente por slot.
+version=v1.6.2-A13fix
+versionCode=32
+author=Mure2005 (I changed my name and from now on it will be mure)
+description=Fix WiFi A13 + Reloj/Bateria + NFC y nivel independiente por slot.

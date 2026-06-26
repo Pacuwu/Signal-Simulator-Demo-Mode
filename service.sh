@@ -180,7 +180,6 @@ get_schedule_profile() {
 # --- INICIO DEL MODO DEMO ---
 settings put global sysui_demo_allowed 1
 am broadcast -a com.android.systemui.demo -e command enter
-am broadcast -a com.android.systemui.demo -e command status -e tty show
 
 # NFC activo por defecto al arrancar
 am broadcast -a com.android.systemui.demo -e command status -e nfc show

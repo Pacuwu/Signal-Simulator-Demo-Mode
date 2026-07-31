@@ -14,8 +14,11 @@ A module that takes advantage of Android's demo mode, simulating network type, s
 - It works on Nokia UI Android 13 (tested from a GSI on a Redmi 9A)
 - works on flymeOS (tested on a flymeOS android 13 GSI on redmi 9A)
 
+It works partially/funciona parcialmente
+- HyperOS/MIUI: The demo mode does enter and start, but the time and battery freeze and you can't control icons, and the wifi doesn't hide (it will adapt soon).
+
 **❌ Does not work on / No funciona en:**
-- HyperOS, MIUI, Funtouch, Origin
+- ~~HyperOS~~/~~MIUI~~, Funtouch, Origin
 
 **⚠️ May work, not tested / Podría funcionar, no probado:**
 - ~~NokiaUI~~ (tested, it works), HelloUI (Motorola), OxygenOS, and any AOSP-based ROM

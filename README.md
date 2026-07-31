@@ -12,7 +12,7 @@ A module that takes advantage of Android's demo mode, simulating network type, s
 - e/OS (Android 11) — very compatible, recommended to use GravityBox for battery icon
 - VoltageOS (Android 16) — bug fixed
 - It works on Nokia UI Android 13 (tested from a GSI on a Redmi 9A)
-- works on flymeOS (Meizu) (tested on a flymeOS android 13 GSI on redmi 9A)
+- works on flymeOS (tested on a flymeOS android 13 GSI on redmi 9A)
 
 **❌ Does not work on / No funciona en:**
 - HyperOS, MIUI, Funtouch, Origin
